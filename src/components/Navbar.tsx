@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center">
             <Link to="/dashboard" className="flex items-center space-x-2">
               <MessageSquare className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">MessageHub</span>
+              <span className="text-xl font-bold text-gray-900">SandeshSeva</span>
             </Link>
           </div>
 
