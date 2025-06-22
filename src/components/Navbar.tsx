@@ -1,13 +1,13 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { LogOut, MessageSquare, Users, Calendar } from 'lucide-react';
+import { LogOut, MessageSquare, Users, Calendar, Menu } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
   return (
     <nav className="bg-white shadow-lg border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
             <Link to="/dashboard" className="flex items-center space-x-2">
               <MessageSquare className="h-8 w-8 text-blue-600" />
@@ -27,7 +27,19 @@ const Navbar: React.FC = () => {
             </Link>
           </div>
 
-          <div className="flex items-center space-x-4">
+          {/* Hamburger menu for mobile */}
+          <div className="flex md:hidden">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-gray-600 hover:text-gray-900 focus:outline-none"
+              aria-label="Toggle menu"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+          </div>
+
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-4">
             {user?.role === 'admin' && (
               <Link
                 to="/admin"
@@ -41,7 +53,7 @@ const Navbar: React.FC = () => {
                 <span>Admin</span>
               </Link>
             )}
-            
+
             <Link
               to="/dashboard"
               className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -66,6 +78,57 @@ const Navbar: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {menuOpen && (
+          <div className="md:hidden mt-2 space-y-2">
+            {user?.role === 'admin' && (
+              <Link
+                to="/admin"
+                onClick={() => setMenuOpen(false)}
+                className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive('/admin')
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                }`}
+              >
+                <div className="flex items-center space-x-1">
+                  <Users className="h-4 w-4" />
+                  <span>Admin</span>
+                </div>
+              </Link>
+            )}
+
+            <Link
+              to="/dashboard"
+              onClick={() => setMenuOpen(false)}
+              className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive('/dashboard')
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              <div className="flex items-center space-x-1">
+                <Calendar className="h-4 w-4" />
+                <span>Dashboard</span>
+              </div>
+            </Link>
+
+            <div className="flex items-center space-x-3 px-3">
+              <span className="text-sm text-gray-600">Welcome, {user?.name}</span>
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleLogout();
+                }}
+                className="flex items-center space-x-1 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );
